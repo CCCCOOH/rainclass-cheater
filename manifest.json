@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Rain Class Hacker",
+  "version": "2.5",
+  "description": "悬浮题目文字加黑高亮，点击题目自动AI答题",
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["question-bank.js", "content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "host_permissions": [
+    "https://api.deepseek.com/*"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

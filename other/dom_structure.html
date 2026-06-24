@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>试卷DOM核心结构</title>
+    <!-- 模拟外部样式和字体图标库，用于正确渲染 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.15.14/theme-chalk/index.css">
+    <style>
+        /* 简单重置与布局，仅用于展示结构 */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f5f7fa; padding: 20px; }
+        .exam-main--content { max-width: 900px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); padding: 20px; position: relative; overflow: hidden; }
+        .subject-item { border-bottom: 1px solid #ebeef5; padding: 20px 0; }
+        .subject-item:last-child { border-bottom: none; }
+        .exercise-item { position: relative; }
+        .item-type { font-weight: 600; color: #409EFF; margin-bottom: 12px; font-size: 14px; }
+        .item-type .status { margin-left: 12px; font-weight: normal; color: #67C23A; }
+        .item-type .status svg { width: 16px; height: 16px; vertical-align: middle; }
+        .item-body h4 { margin: 8px 0 12px; font-weight: 500; color: #303133; }
+        .list-unstyled { list-style: none; padding: 0; margin: 0; }
+        .list-unstyled li { margin-bottom: 10px; }
+        .el-radio { display: flex; align-items: center; cursor: pointer; }
+        .el-radio__input { display: inline-flex; align-items: center; margin-right: 8px; }
+        .el-radio__inner { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #dcdfe6; display: inline-block; position: relative; }
+        .el-radio.is-checked .el-radio__inner { border-color: #409EFF; background: #409EFF; }
+        .el-radio.is-checked .el-radio__inner::after { content: ""; width: 4px; height: 4px; background: white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .el-radio__original { opacity: 0; position: absolute; width: 0; height: 0; }
+        .radioInput { font-weight: 600; margin-right: 6px; color: #606266; }
+        .radioText p { margin: 0; display: inline; }
+        .blank-item-dynamic { border: 1px solid #dcdfe6; border-radius: 4px; padding: 4px 10px; margin: 0 4px; min-width: 120px; }
+        .ai-answer-btn { position: absolute; right: 10px; top: 10px; background: #409EFF; color: white; border: none; border-radius: 20px; padding: 4px 14px; font-size: 12px; cursor: pointer; z-index: 5; box-shadow: 0 2px 6px rgba(64,158,255,0.3); transition: 0.3s; }
+        .ai-answer-btn:hover { background: #66b1ff; transform: scale(1.05); }
+        .ai-status-tooltip { position: absolute; right: 70px; top: 12px; font-size: 12px; color: #909399; background: #f0f2f5; padding: 2px 10px; border-radius: 12px; z-index: 4; white-space: nowrap; }
+        .ueditor-content { border: 1px solid #dcdfe6; border-radius: 4px; padding: 4px; background: #fafafa; }
+        .ueditor-content iframe { width: 100%; height: 180px; border: none; background: white; }
+        .upload-body { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+        .btn.attachment { color: #409EFF; cursor: pointer; font-size: 13px; }
+        .btn.support { font-size: 12px; color: #909399; }
+        .trigger { color: #409EFF; cursor: pointer; }
+        .watermark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; background-repeat: repeat; background-position: left top; mix-blend-mode: multiply; opacity: 0.06; }
+        .exam-font { font-size: 14px; color: #606266; line-height: 1.6; }
+        .clearfix::after { content: ""; display: table; clear: both; }
+        .el-popover__reference-wrapper { display: inline-block; }
+        .icon { widt[86;65:3uh: 1em; height: 1em; vertical-align: -0.15em; fill: currentColor; overflow: hidden; }
+        .el-icon-loading { animation: rotating 2s linear infinite; display: inline-block; }
+        @keyframes rotating { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .el-icon-paperclip { margin-right: 4px; }
+        /* 模拟一些图标 */
+        .el-icon-paperclip::before { content: "📎"; }
+        .el-icon-loading::before { content: "⏳"; }
+    </style>
+</head>
+<body>
+    <div class="exam-main--content" style="">
+        <!-- ==================== 第1题：单选题（已选A，保存成功） ==================== -->
+        <div class="subject-item">
+            <div data-v-682e95ae="" class="exercise-item" style="position: relative;">
+                <div data-v-682e95ae="" class="item-type">
+                    1.单选题
+                    <span data-v-682e95ae="">(1分)</span>
+                    <span data-v-682e95ae="">
+                        <span data-v-682e95ae="" class="status success">
+                            <svg data-v-682e95ae="" aria-hidden="true" class="icon" style="width:16px;height:16px;"><use data-v-682e95ae="" xlink:href="#icon--yijiaojuan"></use></svg>
+                            答案保存成功
+                        </span>
+                    </span>
+                </div>
+                <div data-v-682e95ae="" class="item-body">
+                    <h4 data-v-682e95ae="" class="clearfix exam-font"><p>以下哪个指令可以显示指定文件的详细信息 ()</p></h4>
+                    <div data-v-682e95ae="" class="exam-font">
+                        <ul data-v-682e95ae="" class="list-unstyled list-unstyled-radio">
+                            <li data-v-682e95ae="">
+                                <label data-v-682e95ae="" role="radio" tabindex="0" class="el-radio is-checked" aria-checked="true">
+                                    <span class="el-radio__input is-checked"><span class="el-radio__inner"></span><input type="radio" aria-hidden="true" name="radio0" tabindex="-1" autocomplete="off" class="el-radio__original" value="A"></span>
+                                    <span class="el-radio__label">
+                                        <span data-v-682e95ae="" class="radioInput">A <i data-v-682e95ae="" class="el-icon-loading" style="display: none;"></i></span>
+                                        <span data-v-682e95ae="" class="radioText"><p>hadoop fs -ls</p></span>
+                                    </span>
+                                </label>
+                            </li>
+                            <li data-v-682e95ae="">
+                                <label data-v-682e95ae="" role="radio" tabindex="0" class="el-radio">
+                                    <span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" aria-hidden="true" name="radio1" tabindex="-1" autocomplete="off" class="el-radio__original" value="B"></span>
+                                    <span class="el-radio__label">
+                                        <span data-v-682e95ae="" class="radioInput">B <i data-v-682e95ae="" class="el-icon-loading" style="display: none;"></i></span>
+                                        <span data-v-682e95ae="" class="radioText"><p>hadoop fs -cat</p></span>
+                                    </span>
+                                </label>
+                            </li>
+                            <li data-v-682e95ae="">
+                                <label data-v-682e95ae="" role="radio" tabindex="0" class="el-radio">
+                                    <span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" aria-hidden="true" name="radio2" tabindex="-1" autocomplete="off" class="el-radio__original" value="C"></span>
+                                    <span class="el-radio__label">
+                                        <span data-v-682e95ae="" class="radioInput">C <i data-v-682e95ae="" class="el-icon-loading" style="display: none;"></i></span>
+                                        <span data-v-682e95ae="" class="radioText"><p>hadoop fs -mkdirs [-p]</p></span>
+                                    </span>
+                                </label>
+                            </li>
+                            <li data-v-682e95ae="">
+                                <label data-v-682e95ae="" role="radio" tabindex="0" class="el-radio">
+                                    <span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" aria-hidden="true" name="radio3" tabindex="-1" autocomplete="off" class="el-radio__original" value="D"></span>
+                                    <span class="el-radio__label">
+                                        <span data-v-682e95ae="" class="radioInput">D <i data-v-682e95ae="" class="el-icon-loading" style="display: none;"></i></span>
+                                        <span data-v-682e95ae="" class="radioText"><p>hadoop fs -copyFromLocal</p></span>
+                                    </span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="ai-answer-btn" title="点击AI答题">AI</button>
+                <div class="ai-status-tooltip">❌ 请求失败</div>
+            </div>
+        </div>
+
+        <!-- ==================== 第2题：单选题（未答） ==================== -->
+        <div class="subject-item">
+            <div data-v-682e95ae="" class="exercise-item" style="position: relative;">
+                <div data-v-682e95ae="" class="item-type">
+                    2.单选题 <span data-v-682e95ae="">(1分)</span> <span data-v-682e95ae=""><!----></span>
+                </div>
+                <div data-v-682e95ae="" class="item-body">
+                    <h4 data-v-682e95ae="" class="clearfix exam-font"><p>HDFS 中的命名空间管理包括以下哪些操作 ()</p></h4>
+                    <div data-v-682e95ae="" class="exam-font">
+                        <ul data-v-682e95ae="" class="list-unstyled list-unstyled-radio">
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio0" value="A"></span><span class="el-radio__label"><span class="radioInput">A</span> <span class="radioText"><p>创建文件和目录</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio1" value="B"></span><span class="el-radio__label"><span class="radioInput">B</span> <span class="radioText"><p>删除文件和目录</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio2" value="C"></span><span class="el-radio__label"><span class="radioInput">C</span> <span class="radioText"><p>重命名文件和目录</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio3" value="D"></span><span class="el-radio__label"><span class="radioInput">D</span> <span class="radioText"><p>所有选项都正确</p></span></span></label></li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="ai-answer-btn" title="点击AI答题">AI</button>
+                <div class="ai-status-tooltip">✓ 思考结束</div>
+            </div>
+        </div>
+
+        <!-- ==================== 第3题：单选题 ==================== -->
+        <div class="subject-item">
+            <div data-v-682e95ae="" class="exercise-item" style="position: relative;">
+                <div data-v-682e95ae="" class="item-type">3.单选题 <span>(1分)</span> <span><!----></span></div>
+                <div class="item-body">
+                    <h4 class="clearfix exam-font"><p>HDFS 通信协议都是构建在哪种协议基础之上的 ()</p></h4>
+                    <div class="exam-font">
+                        <ul class="list-unstyled list-unstyled-radio">
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio0" value="A"></span><span class="el-radio__label"><span class="radioInput">A</span> <span class="radioText"><p>WebSocket</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio1" value="B"></span><span class="el-radio__label"><span class="radioInput">B</span> <span class="radioText"><p>UDP</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio2" value="C"></span><span class="el-radio__label"><span class="radioInput">C</span> <span class="radioText"><p>TCP/IP</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio3" value="D"></span><span class="el-radio__label"><span class="radioInput">D</span> <span class="radioText"><p>所有选项都正确</p></span></span></label></li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="ai-answer-btn" title="点击AI答题 (单选)">AI</button>
+                <div class="ai-status-tooltip"></div>
+            </div>
+        </div>
+
+        <!-- ==================== 第4题：单选题 ==================== -->
+        <div class="subject-item">
+            <div data-v-682e95ae="" class="exercise-item" style="position: relative;">
+                <div class="item-type">4.单选题 <span>(1分)</span> <span><!----></span></div>
+                <div class="item-body">
+                    <h4 class="clearfix exam-font"><p>以下属于客户端与数据节点之间交互协议的是 ()</p></h4>
+                    <div class="exam-font">
+                        <ul class="list-unstyled list-unstyled-radio">
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio0" value="A"></span><span class="el-radio__label"><span class="radioInput">A</span> <span class="radioText"><p>WebSocket</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio1" value="B"></span><span class="el-radio__label"><span class="radioInput">B</span> <span class="radioText"><p>RPC (Remote Procedure Call)</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio2" value="C"></span><span class="el-radio__label"><span class="radioInput">C</span> <span class="radioText"><p>TCP/IP</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio3" value="D"></span><span class="el-radio__label"><span class="radioInput">D</span> <span class="radioText"><p>所有选项都正确</p></span></span></label></li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="ai-answer-btn" title="点击AI答题 (单选)">AI</button>
+                <div class="ai-status-tooltip"></div>
+            </div>
+        </div>
+
+        <!-- ==================== 第5题：单选题 ==================== -->
+        <div class="subject-item">
+            <div data-v-682e95ae="" class="exercise-item" style="position: relative;">
+                <div class="item-type">5.单选题 <span>(1分)</span> <span><!----></span></div>
+                <div class="item-body">
+                    <h4 class="clearfix exam-font"><p>以下哪个指令可以在 HDFS 上创建一个新的文件夹 ()</p></h4>
+                    <div class="exam-font">
+                        <ul class="list-unstyled list-unstyled-radio">
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio0" value="A"></span><span class="el-radio__label"><span class="radioInput">A</span> <span class="radioText"><p>hadoop fs -ls</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio1" value="B"></span><span class="el-radio__label"><span class="radioInput">B</span> <span class="radioText"><p>hadoop fs -cat</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio2" value="C"></span><span class="el-radio__label"><span class="radioInput">C</span> <span class="radioText"><p>hadoop fs -mkdirs [-p]</p></span></span></label></li>
+                            <li><label class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" name="radio3" value="D"></span><span class="el-radio__label"><span class="radioInput">D</span> <span class="radioText"><p>hadoop fs -copyFromLocal</p></span></span></label></li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="ai-answer-btn" title="点击AI答题">AI</button>
+                <div class="ai-status-tooltip">✓ 思考结束</div>
+            </div>
+        </div>
+
+        <!-- ==================== 第6题：主观题（带富文本编辑器） ==================== -->
+        <div class="subject-item" style="">
+            <div data-v-682e95ae="" class="exercise-item" style="position: relative;">
+                <div class="item-type">6.主观题 <span>(10分)</span> <span><!----></span></div>
+                <div class="item-body" style="">
+                    <h4 class="clearfix exam-font">简述 HBase 与 HDFS 的关系。</h4>
+                    <div class="exam-font"><!----></div>
+                    <div style="">
+                        <div class="ueditor-content" style="">
+                            <div height="200" style="">
+                                <div id="ueditor-349.1087456429303" class="edui-gray" style="">
+                                    <div class="edui-editor edui-gray" style="width: 100%; z-index: 2;">
+                                        <div class="edui-editor-toolbarbox edui-gray">
+                                            <div class="edui-editor-toolbarboxouter edui-gray">
+                                                <div class="edui-editor-toolbarboxinner edui-gray">
+                                                    <div class="edui-toolbar edui-gray" style="user-select: none; display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 0;">
+                                                        <span class="edui-box edui-button" style="background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; cursor:pointer;">加粗</span>
+                                                        <span class="edui-box edui-button" style="background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; cursor:pointer;">斜体</span>
+                                                        <span class="edui-box edui-button" style="background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; cursor:pointer;">下划线</span>
+                                                        <span class="edui-box edui-button" style="background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; cursor:pointer;">超链接</span>
+                                                        <span class="edui-box edui-button" style="background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; cursor:pointer;">多图上传</span>
+                                                        <span class="edui-box edui-button" style="background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; cursor:pointer;">手机传图</span>
+                                                        <span class="edui-box edui-button" style="background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; cursor:pointer;">插入公式</span>
+                                                        <span class="edui-box edui-combox" style="background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; cursor:pointer;">代码语言 ▾</span>
+                                                        <span class="edui-box edui-button" style="background:#f0f2f5; padding:2px 8px; border-radius:4px; font-size:12px; cursor:pointer; margin-left:auto;">全屏</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="edui-editor-iframeholder edui-gray" style="width: 100%; height: 180px; overflow: hidden; background: white; border:1px solid #dcdfe6; border-radius:4px;">
+                                            <iframe src="/resources/ueditor/iframe.html?uid=0" style="width:100%; height:100%; border:none;"></iframe>
+                                        </div>
+                                        <div class="edui-editor-bottomContainer" style="padding: 4px 8px; background:#fafafa; border-top:1px solid #ebeef5; font-size:12px; color:#909399; display:flex; justify-content:space-between;">
+                                            <span>字数统计</span>
+                                            <span>文档将自动保存</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: rgb(155, 155, 155); margin-top: 10px;">文档将自动保存</div>
+                        <div style="margin-top: 20px;">
+                            <div class="upload-body">
+                                <div class="btn attachment">
+                                    <span><span style="cursor: pointer;"><i class="el-icon-paperclip"></i> 添加附件</span></span>
+                                </div>
+                                <div class="btn support">( 可上传1个附件，文件不超过100M) <span class="trigger">?</span></div>
+                            </div>
+                            <div class="uploadvue">
+                                <div class="attachmentUploadContainer">
+                                    <div class="attachmentUpload">
+                                        <div tabindex="0" class="el-upload el-upload--text">
+                                            <div id="upload199955924" class="trigger noItem attachment"></div>
+                                            <input type="file" name="file" accept=".pdf,.doc,.docx,.wps,.pages,.xls,.xlsx,.et,.csv,.numbers,.ppt,.pptx,.dps,.key,.txt,.rtf,.jpg,.jpeg,.png,.bmp,.tif,.gif,.rar,.zip,.7z,.tar,.mp3,.wav,.mov,.mp4,.wmv" class="el-upload__input">
+                                        </div>
+                                        <div class="tip"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span style="opacity: 0; float: left; width: 100%;">占位</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="ai-answer-btn" title="点击AI答题 (主观)">AI</button>
+                <div class="ai-status-tooltip"></div>
+            </div>
+        </div>
+
+        <!-- ==================== 第7题：主观题（已保存） ==================== -->
+        <div class="subject-item" style="">
+            <div data-v-682e95ae="" class="exercise-item" style="position: relative;">
+                <div class="item-type">
+                    7.主观题 <span>(10分)</span>
+                    <span><span class="status success"><svg class="icon" style="width:16px;height:16px;"><use xlink:href="#icon--yijiaojuan"></use></svg> 答案保存成功</span></span>
+                </div>
+                <div class="item-body">
+                    <h4 class="clearfix exam-font">简述 HBase 体系结构。</h4>
+                    <div class="exam-font"><!----></div>
+                    <div style="">
+                        <div class="ueditor-content" style="">
+                            <div height="200" style="">
+                                <div class="edui-editor edui-gray" style="width:100%;">
+                                    <div class="edui-editor-iframeholder" style="height:180px; background:white; border:1px solid #dcdfe6; border-radius:4px;">
+                                        <iframe src="/resources/ueditor/iframe.html?uid=1" style="width:100%; height:100%; border:none;"></iframe>
+                                    </div>
+                                    <div style="padding:4px 8px; background:#fafafa; border-top:1px solid #ebeef5; font-size:12px; color:#909399; display:flex; justify-content:space-between;">
+                                        <span>字数统计</span>
+                                        <span>文档将自动保存</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="font-size: 12px; color: rgb(155, 155, 155); margin-top: 10px;">文档将自动保存</div>
+                        <div style="margin-top: 20px;">
+                            <div class="upload-body">
+                                <div class="btn attachment"><span><span style="cursor: pointer;"><i class="el-icon-paperclip"></i> 添加附件</span></span></div>
+                                <div class="btn support">( 可上传1个附件，文件不超过100M) <span class="trigger">?</span></div>
+                            </div>
+                            <div class="uploadvue"><div class="attachmentUploadContainer"><div class="attachmentUpload"><div class="el-upload el-upload--text"><div id="upload199955925" class="trigger noItem attachment"></div><input type="file" class="el-upload__input"></div></div></div></div>
+                            <span style="opacity:0; float:left; width:100%;">占位</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="ai-answer-btn" title="点击AI答题 (主观)">AI</button>
+                <div class="ai-status-tooltip"></div>
+            </div>
+        </div>
+
+        <!-- ==================== 第8-10题：主观题（简化，结构相同） ==================== -->
+        <div class="subject-item" style=""><div data-v-682e95ae="" class="exercise-item" style="position: relative;"><div class="item-type">8.主观题 <span>(10分)</span> <span><!----></span></div><div class="item-body"><h4 class="clearfix exam-font">简述 HBase 数据模型。</h4><div class="exam-font"><!----></div><div><div class="ueditor-content"><div height="200"><div class="edui-editor edui-gray" style="width:100%;"><div class="edui-editor-iframeholder" style="height:180px; background:white; border:1px solid #dcdfe6; border-radius:4px;"><iframe src="/resources/ueditor/iframe.html?uid=2" style="width:100%; height:100%; border:none;"></iframe></div><div style="padding:4px 8px; background:#fafafa; border-top:1px solid #ebeef5; font-size:12px; color:#909399; display:flex; justify-content:space-between;"><span>字数统计</span><span>文档将自动保存</span></div></div></div></div><div style="font-size:12px; color:#9b9b9b; margin-top:10px;">文档将自动保存</div><div style="margin-top:20px;"><div class="upload-body"><div class="btn attachment"><span><span style="cursor:pointer;"><i class="el-icon-paperclip"></i> 添加附件</span></span></div><div class="btn support">( 可上传1个附件，文件不超过100M) <span class="trigger">?</span></div></div><div class="uploadvue"><div class="attachmentUploadContainer"><div class="attachmentUpload"><div class="el-upload el-upload--text"><div id="upload199955926" class="trigger noItem attachment"></div><input type="file" class="el-upload__input"></div></div></div></div><span style="opacity:0; float:left; width:100%;">占位</span></div></div></div><button class="ai-answer-btn" title="点击AI答题 (主观)">AI</button><div class="ai-status-tooltip"></div></div></div>
+        <div class="subject-item" style=""><div data-v-682e95ae="" class="exercise-item" style="position: relative;"><div class="item-type">9.主观题 <span>(10分)</span> <span><!----></span></div><div class="item-body"><h4 class="clearfix exam-font">简述文档数据库典型应用及优缺点。</h4><div class="exam-font"><!----></div><div><div class="ueditor-content"><div height="200"><div class="edui-editor edui-gray" style="width:100%;"><div class="edui-editor-iframeholder" style="height:180px; background:white; border:1px solid #dcdfe6; border-radius:4px;"><iframe src="/resources/ueditor/iframe.html?uid=3" style="width:100%; height:100%; border:none;"></iframe></div><div style="padding:4px 8px; background:#fafafa; border-top:1px solid #ebeef5; font-size:12px; color:#909399; display:flex; justify-content:space-between;"><span>当前已输入103个字符, 您还可以输入19897个字符。</span><span>文档将自动保存</span></div></div></div></div><div style="font-size:12px; color:#9b9b9b; margin-top:10px;">文档将自动保存</div><div style="margin-top:20px;"><div class="upload-body"><div class="btn attachment"><span><span style="cursor:pointer;"><i class="el-icon-paperclip"></i> 添加附件</span></span></div><div class="btn support">( 可上传1个附件，文件不超过100M) <span class="trigger">?</span></div></div><div class="uploadvue"><div class="attachmentUploadContainer"><div class="attachmentUpload"><div class="el-upload el-upload--text"><div id="upload199955927" class="trigger noItem attachment"></div><input type="file" class="el-upload__input"></div></div></div></div><span style="opacity:0; float:left; width:100%;">占位</span></div></div></div><button class="ai-answer-btn" title="点击AI答题">AI</button><div class="ai-status-tooltip">✓ 思考结束</div></div></div>
+        <div class="subject-item" style=""><div data-v-682e95ae="" class="exercise-item" style="position: relative;"><div class="item-type">10.主观题 <span>(10分)</span> <span><!----></span></div><div class="item-body"><h4 class="clearfix exam-font">简述图数据库的典型应用及优缺点。</h4><div class="exam-font"><!----></div><div><div class="ueditor-content"><div height="200"><div class="edui-editor edui-gray" style="width:100%;"><div class="edui-editor-iframeholder" style="height:180px; background:white; border:1px solid #dcdfe6; border-radius:4px;"><iframe src="/resources/ueditor/iframe.html
